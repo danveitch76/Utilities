@@ -39,8 +39,10 @@ Function Get-InstalledSoftware {
         [string[]]$Name = $env:COMPUTERNAME
     )
     Begin{
-        $lmKeys = "Software\Microsoft\Windows\CurrentVersion\Uninstall","SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+        $lmKeys = "Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
         $lmReg = [Microsoft.Win32.RegistryHive]::LocalMachine
+		$lm32Keys = "Software\Microsoft\Windows\CurrentVersion\Uninstall"
+        $lm32Reg = [Microsoft.Win32.RegistryHive]::LocalMachine
         $cuKeys = "Software\Microsoft\Windows\CurrentVersion\Uninstall"
         $cuReg = [Microsoft.Win32.RegistryHive]::CurrentUser
     }
@@ -52,8 +54,26 @@ Function Get-InstalledSoftware {
         $masterKeys = @()
         $remoteCURegKey = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($cuReg,$Name)
         $remoteLMRegKey = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($lmReg,$Name)
+		$remoteLM32RegKey = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($lm32Reg,$Name)
         foreach ($key in $lmKeys) {
             $regKey = $remoteLMRegKey.OpenSubkey($key)
+            foreach ($subName in $regKey.GetSubkeyNames()) {
+                foreach($sub in $regKey.OpenSubkey($subName)) {
+                    $masterKeys += (New-Object PSObject -Property @{
+                        "ComputerName" = $Name
+                        "Name" = $sub.GetValue("displayname")
+                        "SystemComponent" = $sub.GetValue("systemcomponent")
+                        "ParentKeyName" = $sub.GetValue("parentkeyname")
+                        "Version" = $sub.GetValue("DisplayVersion")
+                        "UninstallCommand" = $sub.GetValue("UninstallString")
+                        "InstallDate" = $sub.GetValue("InstallDate")
+                        "RegPath" = $sub.ToString()
+                    })
+                }
+            }
+        }
+		foreach ($key in $lm32Keys) {
+            $regKey = $remoteLM32RegKey.OpenSubkey($key)
             foreach ($subName in $regKey.GetSubkeyNames()) {
                 foreach($sub in $regKey.OpenSubkey($subName)) {
                     $masterKeys += (New-Object PSObject -Property @{
