@@ -65,6 +65,7 @@ Function Get-InstalledSoftware {
                         "SystemComponent" = $sub.GetValue("systemcomponent")
                         "ParentKeyName" = $sub.GetValue("parentkeyname")
                         "Version" = $sub.GetValue("DisplayVersion")
+                        "Publisher" = $sub.GetValue("publisher")
                         "UninstallCommand" = $sub.GetValue("UninstallString")
                         "InstallDate" = $sub.GetValue("InstallDate")
                         "RegPath" = $sub.ToString()
@@ -82,6 +83,7 @@ Function Get-InstalledSoftware {
                         "SystemComponent" = $sub.GetValue("systemcomponent")
                         "ParentKeyName" = $sub.GetValue("parentkeyname")
                         "Version" = $sub.GetValue("DisplayVersion")
+                        "Publisher" = $sub.GetValue("publisher")
                         "UninstallCommand" = $sub.GetValue("UninstallString")
                         "InstallDate" = $sub.GetValue("InstallDate")
                         "RegPath" = $sub.ToString()
@@ -100,6 +102,7 @@ Function Get-InstalledSoftware {
                             "SystemComponent" = $sub.GetValue("systemcomponent")
                             "ParentKeyName" = $sub.GetValue("parentkeyname")
                             "Version" = $sub.GetValue("DisplayVersion")
+                            "Publisher" = $sub.GetValue("publisher")
                             "UninstallCommand" = $sub.GetValue("UninstallString")
                             "InstallDate" = $sub.GetValue("InstallDate")
                             "RegPath" = $sub.ToString()
@@ -109,7 +112,7 @@ Function Get-InstalledSoftware {
             }
         }
         $woFilter = {$null -ne $_.name -AND $_.SystemComponent -ne "1" -AND $null -eq $_.ParentKeyName}
-        $props = 'Name','Version','ComputerName','Installdate','UninstallCommand','RegPath'
+        $props = 'Name','Version','ComputerName','Installdate','UninstallCommand','RegPath','Publisher'
         $masterKeys = ($masterKeys | Where-Object $woFilter | Select-Object $props | Sort-Object Name)
         $masterKeys
     }
