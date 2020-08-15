@@ -118,3 +118,4 @@ Function Get-InstalledSoftware {
     }
     End{}
 }
+Get-InstalledSoftware | Select-Object ComputerName, Name, Version, Publisher, InstallDate | Format-Table –AutoSize > C:\temp\thailandmachines.txt
